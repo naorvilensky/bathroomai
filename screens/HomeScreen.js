@@ -2,26 +2,37 @@ import React from 'react';
 import {
 	Image,
 	Platform,
+	RefreshControl,
 	ScrollView,
 	StyleSheet,
 	Text,
-	TouchableOpacity,
 	View,
 } from 'react-native';
-import {WebBrowser} from 'expo';
 import ApiService from '../services/ApiService';
-import {MonoText} from '../components/StyledText';
 
 export default class HomeScreen extends React.Component {
 	static navigationOptions = {
-		header: null,
+		title: 'main',
 	};
 	
+	constructor(props) {
+		super(props);
+		this.state = {
+			refreshing: false,
+		};
+	}
+	
 	api = new ApiService();
+	
 	render() {
 		return (
 			<View style={styles.container}>
-				<ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+				<ScrollView style={styles.container} contentContainerStyle={styles.contentContainer} refreshControl={
+					<RefreshControl
+						refreshing={this.state.refreshing}
+						onRefresh={this._onRefresh}
+					/>
+				}>
 					<View style={styles.imagesContainer}>
 						<Image
 							source={
@@ -38,67 +49,43 @@ export default class HomeScreen extends React.Component {
 					</View>
 					
 					<View style={styles.getStartedContainer}>
-						{this._maybeRenderDevelopmentModeWarning()}
-						
-						<Text style={styles.getStartedText}>Get Closing</Text>
-						
-						<View style={[styles.codeHighlightContainer, styles.homeScreenFilename]}>
-							<MonoText style={styles.codeHighlightText}>screens/HomeScreen.js</MonoText>
-						</View>
-						
 						<Text style={styles.getStartedText}>
 							Bathroom Ai
 						</Text>
 					</View>
 					
-					<View style={styles.helpContainer}>
+{/*					<View style={styles.helpContainer}>
 						<TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
 							<Text style={styles.helpLinkText}>Doing an API Request!</Text>
 						</TouchableOpacity>
-					</View>
+					</View>*/}
 				</ScrollView>
 				
-				<View style={styles.tabBarInfoContainer}>
+{/*				<View style={styles.tabBarInfoContainer}>
 					<Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
 					
 					<View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
 						<MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
 					</View>
-				</View>
+				</View>*/}
 			</View>
 		);
 	}
 	
-	_maybeRenderDevelopmentModeWarning() {
-		if(__DEV__) {
-			const learnMoreButton = (
-				<Text onPress={this._handleLearnMorePress} style={styles.helpLinkText}>
-					Learn more
-				</Text>
-			);
+	_fetchData() {
+		return this.api.getBathroomStats('https://bathroom-ai.herokuapp.com/api/rooms');
+	};
+	
+	_onRefresh = () => {
+		this.setState({refreshing: true});
+		this._fetchData().then((data) => {
+			console.log(data.data);
+			this.setState({refreshing: false});
 			
-			return (
-				<Text style={styles.developmentModeText}>
-					Development mode is enabled, your app will be slower but you can use useful development
-					tools. {learnMoreButton}
-				</Text>
-			);
-		} else {
-			return (
-				<Text style={styles.developmentModeText}>
-					You are not in development mode, your app will run at full speed.
-				</Text>
-			);
-		}
+		});
 	}
 	
-	_handleLearnMorePress = () => {
-		WebBrowser.openBrowserAsync('https://docs.expo.io/versions/latest/guides/development-mode');
-	};
-	
-	_handleHelpPress = () => {
-		this.api.getBathroomStats('https://bathroom-ai.herokuapp.com/api/rooms');
-	};
+
 }
 
 const styles = StyleSheet.create({
