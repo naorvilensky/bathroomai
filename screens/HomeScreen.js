@@ -11,9 +11,9 @@ import ApiService from '../services/ApiService';
 
 export default class HomeScreen extends React.Component {
 	static navigationOptions = {
-		title: 'main',
+		title: 'something',
 	};
-	
+
 	constructor(props) {
 		super(props);
 		this.state = {
@@ -27,15 +27,15 @@ export default class HomeScreen extends React.Component {
 				occupied: false
 			}
 		};
-		
+
 	}
-	
+
 	componentDidMount() {
 		this._onRefresh();
 	}
-	
+
 	api = new ApiService();
-	
+
 	render() {
 		return (
 			<View style={styles.container}>
@@ -47,7 +47,7 @@ export default class HomeScreen extends React.Component {
 				}>
 					<View style={styles.imagesContainer}>
 						<View style={styles.singleImageContainer}>
-							
+
 							<Image
 								source={
 									this.state.men.image
@@ -55,8 +55,11 @@ export default class HomeScreen extends React.Component {
 								style={styles.welcomeImage}
 							/>
 							<View>
-								<Text style={{textAlign: 'center', color: this._setOccupiedState('men') ? '#FF2E2E' : '#06B904'}}>
-									{(() =>this._setOccupiedState('men') ? 'Taken' : 'Free')()}
+								<Text style={{
+									textAlign: 'center',
+									color: this._setOccupiedState('men') ? '#FF2E2E' : '#06B904'
+								}}>
+									{(() => this._setOccupiedState('men') ? 'Taken' : 'Free')()}
 								</Text>
 							</View>
 						</View>
@@ -68,13 +71,16 @@ export default class HomeScreen extends React.Component {
 								style={styles.welcomeImage}
 							/>
 							<View>
-								<Text style={{textAlign: 'center', color: this._setOccupiedState('women') ? '#FF2E2E' : '#06B904'}}>
+								<Text style={{
+									textAlign: 'center',
+									color: this._setOccupiedState('women') ? '#FF2E2E' : '#06B904'
+								}}>
 									{(() => this._setOccupiedState('women') ? 'Taken' : 'Free')()}
 								</Text>
 							</View>
 						</View>
 					</View>
-					
+
 					<View style={styles.getStartedContainer}>
 						<Text style={styles.getStartedText}>
 							Bathroom Ai
@@ -84,10 +90,10 @@ export default class HomeScreen extends React.Component {
 			</View>
 		);
 	}
-	
+
 	_setOccupiedState(bathroom) {
 		let occupied = false;
-		switch(bathroom) {
+		switch (bathroom) {
 			case 'men':
 				occupied = this.state.men.occupied;
 				break;
@@ -95,41 +101,40 @@ export default class HomeScreen extends React.Component {
 				occupied = this.state.women.occupied;
 				break;
 		}
-		
+
 		return occupied;
 	}
-	
+
 	_fetchData() {
 		return this.api.getBathroomStats('https://bathroom-ai.herokuapp.com/api/rooms');
 	};
-	
+
 	_onRefresh = () => {
-		this.setState({refreshing: true});
+		this.setState({ refreshing: true });
 		this._fetchData().then((data) => {
 			let response = data.data;
 			this.setState({
 				refreshing: false,
 				men: {
-					image: response[0].occupied ? bathroomStatus.men.taken : bathroomStatus.men.free,
-					occupied: response[0].occupied
+					image: response[ 0 ].occupied ? bathroomStatus.men.taken : bathroomStatus.men.free,
+					occupied: response[ 0 ].occupied
 				},
 				women: {
-					image: response[1].occupied ? bathroomStatus.women.taken : bathroomStatus.women.free,
-					occupied: response[1].occupied
+					image: response[ 1 ].occupied ? bathroomStatus.women.taken : bathroomStatus.women.free,
+					occupied: response[ 1 ].occupied
 				}
 			});
 			console.log({
 				men: {
-					occupied: response[0].occupied
+					occupied: response[ 0 ].occupied
 				},
 				women: {
-					occupied: response[1].occupied
+					occupied: response[ 1 ].occupied
 				}
 			});
 		});
 	}
-	
-	
+
 }
 
 const bathroomStatus = {
