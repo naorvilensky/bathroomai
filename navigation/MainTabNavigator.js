@@ -25,7 +25,7 @@ HomeStack.navigationOptions = {
   ),
 };
 
-const LinksStack = createStackNavigator({
+/*const LinksStack = createStackNavigator({
   Links: LinksScreen,
 });
 
@@ -51,10 +51,10 @@ SettingsStack.navigationOptions = {
       name={Platform.OS === 'ios' ? `ios-options${focused ? '' : '-outline'}` : 'md-options'}
     />
   ),
-};
+};*/
 
 export default createBottomTabNavigator({
   HomeStack,
-  LinksStack,
-  SettingsStack,
+/*  LinksStack,
+  SettingsStack,*/
 });

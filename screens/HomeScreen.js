@@ -1,7 +1,6 @@
 import React from 'react';
 import {
 	Image,
-	Platform,
 	RefreshControl,
 	ScrollView,
 	StyleSheet,
@@ -20,15 +19,19 @@ export default class HomeScreen extends React.Component {
 		this.state = {
 			refreshing: false,
 			men: {
-				image: require('../assets/images/people/men.png'),
+				image: require('../assets/images/people/men/black.png'),
 				occupied: false
 			},
 			women: {
-				image: require('../assets/images/people/women.png'),
+				image: require('../assets/images/people/women/black.png'),
 				occupied: false
 			}
-			
 		};
+		
+	}
+	
+	componentDidMount() {
+		this._onRefresh();
 	}
 	
 	api = new ApiService();
@@ -52,8 +55,8 @@ export default class HomeScreen extends React.Component {
 								style={styles.welcomeImage}
 							/>
 							<View>
-								<Text style={{textAlign: 'center'}}>
-									{this.state.men.occupied ? 'Taken' : 'Free'}
+								<Text style={{textAlign: 'center', color: this._setOccupiedState('men') ? '#FF2E2E' : '#06B904'}}>
+									{(() =>this._setOccupiedState('men') ? 'Taken' : 'Free')()}
 								</Text>
 							</View>
 						</View>
@@ -65,8 +68,8 @@ export default class HomeScreen extends React.Component {
 								style={styles.welcomeImage}
 							/>
 							<View>
-								<Text style={{textAlign: 'center'}}>
-									{this.state.men.occupied ? 'Taken' : 'Free'}
+								<Text style={{textAlign: 'center', color: this._setOccupiedState('women') ? '#FF2E2E' : '#06B904'}}>
+									{(() => this._setOccupiedState('women') ? 'Taken' : 'Free')()}
 								</Text>
 							</View>
 						</View>
@@ -77,23 +80,23 @@ export default class HomeScreen extends React.Component {
 							Bathroom Ai
 						</Text>
 					</View>
-					
-					{/*					<View style={styles.helpContainer}>
-						<TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
-							<Text style={styles.helpLinkText}>Doing an API Request!</Text>
-						</TouchableOpacity>
-					</View>*/}
 				</ScrollView>
-				
-				{/*				<View style={styles.tabBarInfoContainer}>
-					<Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
-					
-					<View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
-						<MonoText style={styles.codeHighlightText}>navigation/MainTabNavigator.js</MonoText>
-					</View>
-				</View>*/}
 			</View>
 		);
+	}
+	
+	_setOccupiedState(bathroom) {
+		let occupied = false;
+		switch(bathroom) {
+			case 'men':
+				occupied = this.state.men.occupied;
+				break;
+			case 'women':
+				occupied = this.state.women.occupied;
+				break;
+		}
+		
+		return occupied;
 	}
 	
 	_fetchData() {
@@ -107,11 +110,11 @@ export default class HomeScreen extends React.Component {
 			this.setState({
 				refreshing: false,
 				men: {
-					image: this.state.men.image,
+					image: response[0].occupied ? bathroomStatus.men.taken : bathroomStatus.men.free,
 					occupied: response[0].occupied
 				},
 				women: {
-					image: this.state.women.image,
+					image: response[1].occupied ? bathroomStatus.women.taken : bathroomStatus.women.free,
 					occupied: response[1].occupied
 				}
 			});
@@ -129,6 +132,17 @@ export default class HomeScreen extends React.Component {
 	
 }
 
+const bathroomStatus = {
+	men: {
+		taken: require('../assets/images/people/men/red.png'),
+		free: require('../assets/images/people/men/green.png')
+	},
+	women: {
+		taken: require('../assets/images/people/women/red.png'),
+		free: require('../assets/images/people/women/green.png')
+	},
+};
+
 const styles = StyleSheet.create({
 	container: {
 		flex: 1,
@@ -137,13 +151,13 @@ const styles = StyleSheet.create({
 	imagesContainer: {
 		display: 'flex',
 		flexDirection: 'row',
-		justifyContent: 'center'
-		
+		justifyContent: 'center',
+		alignItems: 'flex-start'
 	},
 	singleImageContainer: {
 		display: 'flex',
 		flexDirection: 'column',
-		justifyContent: 'center',
+		justifyContent: 'flex-start',
 		alignItems: 'center'
 	},
 	developmentModeText: {
@@ -158,10 +172,9 @@ const styles = StyleSheet.create({
 	},
 	welcomeImage: {
 		width: 100,
-		height: 80,
+		height: 150,
 		resizeMode: 'contain',
 		marginTop: 3,
-		marginLeft: -10,
 	},
 	getStartedContainer: {
 		alignItems: 'center',
