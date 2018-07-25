@@ -19,6 +19,15 @@ export default class HomeScreen extends React.Component {
 		super(props);
 		this.state = {
 			refreshing: false,
+			men: {
+				image: require('../assets/images/people/men.png'),
+				occupied: false
+			},
+			women: {
+				image: require('../assets/images/people/women.png'),
+				occupied: false
+			}
+			
 		};
 	}
 	
@@ -34,18 +43,33 @@ export default class HomeScreen extends React.Component {
 					/>
 				}>
 					<View style={styles.imagesContainer}>
-						<Image
-							source={
-								require('../assets/images/people/men.png')
-							}
-							style={styles.welcomeImage}
-						/>
-						<Image
-							source={
-								require('../assets/images/people/women.png')
-							}
-							style={styles.welcomeImage}
-						/>
+						<View style={styles.singleImageContainer}>
+							
+							<Image
+								source={
+									this.state.men.image
+								}
+								style={styles.welcomeImage}
+							/>
+							<View>
+								<Text style={{textAlign: 'center'}}>
+									{this.state.men.occupied ? 'Taken' : 'Free'}
+								</Text>
+							</View>
+						</View>
+						<View>
+							<Image
+								source={
+									this.state.women.image
+								}
+								style={styles.welcomeImage}
+							/>
+							<View>
+								<Text style={{textAlign: 'center'}}>
+									{this.state.men.occupied ? 'Taken' : 'Free'}
+								</Text>
+							</View>
+						</View>
 					</View>
 					
 					<View style={styles.getStartedContainer}>
@@ -54,14 +78,14 @@ export default class HomeScreen extends React.Component {
 						</Text>
 					</View>
 					
-{/*					<View style={styles.helpContainer}>
+					{/*					<View style={styles.helpContainer}>
 						<TouchableOpacity onPress={this._handleHelpPress} style={styles.helpLink}>
 							<Text style={styles.helpLinkText}>Doing an API Request!</Text>
 						</TouchableOpacity>
 					</View>*/}
 				</ScrollView>
 				
-{/*				<View style={styles.tabBarInfoContainer}>
+				{/*				<View style={styles.tabBarInfoContainer}>
 					<Text style={styles.tabBarInfoText}>This is a tab bar. You can edit it in:</Text>
 					
 					<View style={[styles.codeHighlightContainer, styles.navigationFilename]}>
@@ -79,13 +103,30 @@ export default class HomeScreen extends React.Component {
 	_onRefresh = () => {
 		this.setState({refreshing: true});
 		this._fetchData().then((data) => {
-			console.log(data.data);
-			this.setState({refreshing: false});
-			
+			let response = data.data;
+			this.setState({
+				refreshing: false,
+				men: {
+					image: this.state.men.image,
+					occupied: response[0].occupied
+				},
+				women: {
+					image: this.state.women.image,
+					occupied: response[1].occupied
+				}
+			});
+			console.log({
+				men: {
+					occupied: response[0].occupied
+				},
+				women: {
+					occupied: response[1].occupied
+				}
+			});
 		});
 	}
 	
-
+	
 }
 
 const styles = StyleSheet.create({
@@ -99,6 +140,12 @@ const styles = StyleSheet.create({
 		justifyContent: 'center'
 		
 	},
+	singleImageContainer: {
+		display: 'flex',
+		flexDirection: 'column',
+		justifyContent: 'center',
+		alignItems: 'center'
+	},
 	developmentModeText: {
 		marginBottom: 20,
 		color: 'rgba(0,0,0,0.4)',
@@ -108,11 +155,6 @@ const styles = StyleSheet.create({
 	},
 	contentContainer: {
 		paddingTop: 30,
-	},
-	welcomeContainer: {
-		alignItems: 'center',
-		marginTop: 10,
-		marginBottom: 20,
 	},
 	welcomeImage: {
 		width: 100,
@@ -142,26 +184,6 @@ const styles = StyleSheet.create({
 		lineHeight: 24,
 		textAlign: 'center',
 	},
-	tabBarInfoContainer: {
-		position: 'absolute',
-		bottom: 0,
-		left: 0,
-		right: 0,
-		...Platform.select({
-			ios: {
-				shadowColor: 'black',
-				shadowOffset: {height: -3},
-				shadowOpacity: 0.1,
-				shadowRadius: 3,
-			},
-			android: {
-				elevation: 20,
-			},
-		}),
-		alignItems: 'center',
-		backgroundColor: '#fbfbfb',
-		paddingVertical: 20,
-	},
 	tabBarInfoText: {
 		fontSize: 17,
 		color: 'rgba(96,100,109, 1)',
@@ -169,16 +191,5 @@ const styles = StyleSheet.create({
 	},
 	navigationFilename: {
 		marginTop: 5,
-	},
-	helpContainer: {
-		marginTop: 15,
-		alignItems: 'center',
-	},
-	helpLink: {
-		paddingVertical: 15,
-	},
-	helpLinkText: {
-		fontSize: 14,
-		color: '#2e78b7',
 	},
 });
