@@ -11,7 +11,7 @@ import ApiService from '../services/ApiService';
 
 export default class HomeScreen extends React.Component {
 	static navigationOptions = {
-		title: 'something',
+		title: 'Main',
 	};
 
 	constructor(props) {
