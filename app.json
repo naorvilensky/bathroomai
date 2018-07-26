@@ -5,11 +5,12 @@
 		"slug": "BathroomAi",
 		"privacy": "public",
 		"sdkVersion": "28.0.0",
+		"icon": "assets/images/brai-icon.png",
 		"platforms": [
 			"ios",
 			"android"
 		],
-		"version": "1.0.1 beta",
+		"version": "1.0.2 beta",
 		"orientation": "portrait",
 		"splash": {
 			"resizeMode": "contain",
